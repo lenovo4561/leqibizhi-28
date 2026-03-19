@@ -1,0 +1,239 @@
+<template>
+  <div class="page">
+    <list class="content-list">
+      <!-- 头部包含背景、导航栏、banner，作为一个横向撑满的 list-item -->
+      <list-item type="header" class="header-item">
+        <div class="header-area">
+          <!-- 顶部背景 -->
+          <image class="header-bg" src="../../assets/img/shouyedingbg-6.png"></image>
+
+          <!-- 顶部的导航栏（返回键 + 标题） -->
+          <div class="nav-bar">
+            <div class="back-btn" onclick="goBack">
+              <image class="back-icon" src="../../assets/img/back.png"></image>
+            </div>
+            <text class="title-text">{{ categoryName }}</text>
+          </div>
+        </div>
+
+        <div class="banner-item">
+          <div class="banner-wrap">
+            <image class="banner-img" src="{{bannerUrl}}"></image>
+            <div class="banner-overlay">
+              <text class="banner-text">一块好壁纸，点亮大小屏</text>
+            </div>
+          </div>
+        </div>
+      </list-item>
+
+      <list-item type="grid-row" class="grid-wrap">
+        <div class="photo-grid">
+          <image class="grid-img photo-item" src="{{wallpaperList[0]}}" onclick="goToDetail(1)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[1]}}" onclick="goToDetail(2)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[2]}}" onclick="goToDetail(3)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[3]}}" onclick="goToDetail(4)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[4]}}" onclick="goToDetail(5)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[5]}}" onclick="goToDetail(6)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[6]}}" onclick="goToDetail(7)"></image>
+          <image class="grid-img photo-item" src="{{wallpaperList[7]}}" onclick="goToDetail(8)"></image>
+        </div>
+      </list-item>
+    </list>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const CATEGORY_CODE_MAP = {
+  '动漫': 'dm',
+  '人物': 'rw',
+  '萌宠': 'mc',
+  '自然': 'zr',
+  '热门': 'rm'
+}
+
+export default {
+  // 页面传入的数据
+  public: {
+    categoryName: '自然',
+    categoryCode: 'zr',
+    wallpaperType: 'mobile'
+  },
+
+  private: {
+    bannerUrl: '',
+    wallpaperList: []
+  },
+  
+  onInit() {
+    if (!this.categoryCode) {
+      this.categoryCode = CATEGORY_CODE_MAP[this.categoryName] || 'rm'
+    }
+    this.refreshWallpaperList()
+  },
+
+  refreshWallpaperList() {
+    const baseUrl = this.wallpaperType === 'pc' ? BASE_URL_COMPUTER : BASE_URL_PHONE
+    this.bannerUrl = `${baseUrl}/${this.categoryCode}/1.jpg`
+
+    const list = []
+    for (let i = 1; i <= 8; i++) {
+      list.push(`${baseUrl}/${this.categoryCode}/${i}.jpg`)
+    }
+    this.wallpaperList = list
+  },
+
+  goBack() {
+    router.back()
+  },
+
+  goToDetail(initialId) {
+    router.push({
+      uri: 'pages/WallpaperDetail',
+      params: {
+        wallpaperType: this.wallpaperType,
+        category: this.categoryCode,
+        initialId: initialId
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  width: 100%;
+  background-color: #f5f5f5; /* 随便设置个底色或者透明，看原图是浅色 */
+}
+
+.header-item {
+  flex-direction: column;
+  width: 250px;
+}
+
+/* 头部及背景 */
+.header-area {
+  width: 250px;
+  height: 60px;
+  position: relative;
+  flex-direction: column;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 60px; 
+  object-fit: cover;
+}
+
+.nav-bar {
+  width: 250px;
+  height: 60px;
+  padding-top: 10px;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+/* 返回按钮：原型带有一个白色内圈 */
+.back-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  margin-left: 12px;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.back-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.title-text {
+  position: absolute;
+  width: 250px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000000;
+  z-index: 1;
+}
+
+/* 内容列表区域 */
+.content-list {
+  flex-direction: column;
+  width: 250px;
+  /* 列表覆盖在背景上面并可滚动，需要自己控制一下 margin 或 padding */
+}
+
+.banner-item {
+  width: 250px;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.banner-wrap {
+  width: 226px;
+  height: 70px;
+  border-radius: 6px;
+  position: relative;
+  background-color: #dddddd; /* 占位背景色 */
+  overflow: hidden;
+}
+
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.banner-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 10px;
+}
+
+.banner-text {
+  font-size: 11px;
+  color: #ffffff;
+}
+
+/* 瀑布流/两列布局 */
+.grid-wrap {
+  width: 250px;
+  padding: 0 12px;
+  flex-direction: column;
+}
+
+.photo-grid {
+  width: 226px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.photo-item {
+  width: 110px;
+  height: 166px; /* 按照原图，可能有些不确定，统一先给这个高度 */
+  border-radius: 6px;
+  margin-bottom: 6px;
+  background-color: #efefef;
+}
+</style>

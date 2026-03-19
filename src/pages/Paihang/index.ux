@@ -1,0 +1,292 @@
+<template>
+  <div class="page">
+    <div class="header-area">
+      <!-- 顶部背景 -->
+      <image class="header-bg" src="../../assets/img/shouyedingbg-4.png"></image>
+      <div style="height: 120px;"></div>
+    </div>
+
+    <!-- 带有雾化磨砂效果的外层容器 -->
+    <stack class="top-cards-container">
+      <div class="blur-layer"></div>
+      <div class="frost-overlay"></div>
+      
+      <div class="top-cards-content">
+        <!-- 切换按钮 -->
+        <div class="tab-switcher">
+          <div
+            class="switch-btn"
+            style="{{ activeTab === 'mobile' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
+            onclick="switchTab('mobile')">
+            <text class="switch-text" style="{{ activeTab === 'mobile' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">手机壁纸</text>
+          </div>
+          <div
+            class="switch-btn"
+            style="{{ activeTab === 'pc' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
+            onclick="switchTab('pc')">
+            <text class="switch-text" style="{{ activeTab === 'pc' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">电脑壁纸</text>
+          </div>
+        </div>
+      </div>
+    </stack>
+
+    <div class="sort-section">
+      <div class="sort-tabs">
+        <div class="sort-btn" onclick="switchSort('hot')">
+          <text class="sort-text" style="{{ sortTab === 'hot' ? 'color:#ff5213;font-weight:700;' : 'color:#333333;font-weight:400;' }}">热门</text>
+          <div class="sort-line" if="{{ sortTab === 'hot' }}"></div>
+        </div>
+        <div class="sort-btn" onclick="switchSort('new')">
+          <text class="sort-text" style="{{ sortTab === 'new' ? 'color:#ff5213;font-weight:700;' : 'color:#333333;font-weight:400;' }}">最新</text>
+          <div class="sort-line" if="{{ sortTab === 'new' }}"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 列表区域 -->
+    <div class="list-section" if="{{ activeTab === 'pc' }}">
+      <image class="grid-img img-full" src="{{pcRankList[0]}}" onclick="goToWallpaperDetail(pcRankList[0], 'pc')"></image>
+      <image class="grid-img img-full" src="{{pcRankList[1]}}" onclick="goToWallpaperDetail(pcRankList[1], 'pc')"></image>
+      <image class="grid-img img-full" src="{{pcRankList[2]}}" onclick="goToWallpaperDetail(pcRankList[2], 'pc')"></image>
+    </div>
+
+    <div class="list-section-mobile" if="{{ activeTab === 'mobile' }}">
+      <image class="grid-img img-half" src="{{mobileRankList[0]}}" onclick="goToWallpaperDetail(mobileRankList[0], 'mobile')"></image>
+      <image class="grid-img img-half" src="{{mobileRankList[1]}}" onclick="goToWallpaperDetail(mobileRankList[1], 'mobile')"></image>
+      <image class="grid-img img-half" src="{{mobileRankList[2]}}" onclick="goToWallpaperDetail(mobileRankList[2], 'mobile')"></image>
+      <image class="grid-img img-half" src="{{mobileRankList[3]}}" onclick="goToWallpaperDetail(mobileRankList[3], 'mobile')"></image>
+      <image class="grid-img img-half" src="{{mobileRankList[4]}}" onclick="goToWallpaperDetail(mobileRankList[4], 'mobile')"></image>
+      <image class="grid-img img-half" src="{{mobileRankList[5]}}" onclick="goToWallpaperDetail(mobileRankList[5], 'mobile')"></image>
+    </div>
+
+    <div class="bottom-spacer"></div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+
+export default {
+  data: {
+    activeTab: 'mobile',
+    sortTab: 'hot',
+    mobileRankList: [],
+    pcRankList: []
+  },
+  onInit() {
+    this.applyRankImages()
+  },
+  switchTab(tab) {
+    this.activeTab = tab
+    this.applyRankImages()
+  },
+  switchSort(tab) {
+    this.sortTab = tab
+    this.applyRankImages()
+  },
+  applyRankImages() {
+    // 先统一复用首页同源分类地址，后续再替换为真实排行接口。
+    const startIndex = this.sortTab === 'hot' ? 1 : 7
+    this.mobileRankList = this.buildSeries(BASE_URL_PHONE, 'rm', startIndex, 6)
+    this.pcRankList = this.buildSeries(BASE_URL_COMPUTER, 'rm', startIndex, 3)
+  },
+  buildSeries(baseUrl, categoryCode, start, count) {
+    const list = []
+    for (let i = 0; i < count; i++) {
+      list.push(`${baseUrl}/${categoryCode}/${start + i}.jpg`)
+    }
+    return list
+  },
+  goToWallpaperDetail(url, type) {
+    if (!url) {
+      return
+    }
+
+    let initialId = 1
+    const match = url.match(/\/(\d+)\.jpg$/)
+    if (match) {
+      initialId = parseInt(match[1], 10)
+    }
+
+    router.push({
+      uri: 'pages/WallpaperDetail',
+      params: {
+        wallpaperType: type || this.activeTab,
+        category: 'rm',
+        initialId: initialId,
+        favoriteUrl: url
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.header-area {
+  width: 250px;
+  position: relative;
+  flex-direction: column;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* 磨砂容器 */
+.top-cards-container {
+  width: 226px;
+  margin: -24px 12px 0 12px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.blur-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 226px;
+  height: 100%;
+  border-radius: 12px;
+  filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.frost-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 226px;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+}
+
+.top-cards-content {
+  flex-direction: column;
+  width: 226px;
+  padding: 12px 0;
+}
+
+/* 手机/电脑壁纸切换 */
+.tab-switcher {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.switch-btn {
+  width: 110px;
+  height: 34px;
+  border-radius: 17px;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffebe1;
+}
+
+.active-btn {
+  background: linear-gradient(135deg, #ff7b2b 0%, #ff5213 100%);
+}
+
+.switch-text {
+  font-size: 13px;
+  color: #ff5e18;
+}
+
+.active-text {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* 热门/最新切换 */
+.sort-section {
+  width: 250px;
+  padding: 8px 0 6px 0;
+  margin-top: -6px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sort-tabs {
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.sort-btn {
+  flex-direction: column;
+  align-items: center;
+  margin: 0 20px;
+}
+
+.sort-text {
+  font-size: 14px;
+  color: #333333;
+}
+
+.active-sort-text {
+  color: #ff5213;
+  font-weight: 700;
+}
+
+.sort-line {
+  width: 20px;
+  height: 3px;
+  background-color: #ff5213;
+  border-radius: 2px;
+  margin-top: 4px;
+}
+
+/* 列表区域 */
+.list-section {
+  flex-direction: column;
+  padding: 0 12px;
+}
+
+.list-section-mobile {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.grid-img {
+  background-color: #dfdfdf;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 12px;
+}
+
+.img-full {
+  width: 226px;
+  height: 128px;
+}
+
+.img-half {
+  width: 108px;
+  height: 170px;
+}
+
+.bottom-spacer {
+  width: 100%;
+  height: 66px;
+}
+</style>

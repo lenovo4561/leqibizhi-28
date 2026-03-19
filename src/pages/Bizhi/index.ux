@@ -1,0 +1,480 @@
+<template>
+  <div class="page">
+    <div class="header-area">
+      <!-- 顶部背景 -->
+      <image class="header-bg" src="../../assets/img/shouyedingbg-2.png"></image>
+      <div style="height: 120px;"></div>
+    </div>
+
+    <!-- 带有雾化磨砂效果的外层容器 -->
+    <stack class="top-cards-container">
+      <div class="blur-layer"></div>
+      <div class="frost-overlay"></div>
+      
+      <div class="top-cards-content">
+        <!-- 切换按钮 -->
+        <div class="tab-switcher">
+          <div
+            class="switch-btn"
+            style="{{ activeTab === 'mobile' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
+            onclick="switchTab('mobile')">
+            <text class="switch-text" style="{{ activeTab === 'mobile' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">手机壁纸</text>
+          </div>
+          <div
+            class="switch-btn"
+            style="{{ activeTab === 'pc' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
+            onclick="switchTab('pc')">
+            <text class="switch-text" style="{{ activeTab === 'pc' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">电脑壁纸</text>
+          </div>
+        </div>
+
+        <!-- 4个分类长方形卡片 -->
+        <div class="category-grid">
+          <div class="cat-item" onclick="goToCategory('动漫')">
+            <image class="cat-img" src="{{categoryCovers[0]}}"></image>
+            <text class="cat-title">动漫</text>
+          </div>
+          <div class="cat-item" onclick="goToCategory('人物')">
+            <image class="cat-img" src="{{categoryCovers[1]}}"></image>
+            <text class="cat-title">人物</text>
+          </div>
+          <div class="cat-item" onclick="goToCategory('萌宠')">
+            <image class="cat-img" src="{{categoryCovers[2]}}"></image>
+            <text class="cat-title">萌宠</text>
+          </div>
+          <div class="cat-item" onclick="goToCategory('自然')">
+            <image class="cat-img" src="{{categoryCovers[3]}}"></image>
+            <text class="cat-title">自然</text>
+          </div>
+        </div>
+      </div>
+    </stack>
+
+    <!-- 热门壁纸区域 -->
+    <div class="hot-section">
+      <div class="hot-header">
+        <text class="hot-title">热门壁纸</text>
+        <div class="refresh-wrap" onclick="refreshWallpapers">
+          <image class="refresh-icon" src="../../assets/img/hyp.png"></image>
+          <text class="refresh-text">换一批</text>
+        </div>
+      </div>
+
+      <!-- 瀑布流占位（按照设计图的 1大+右上2+右下2，以及下方一行4个） -->
+      <div if="{{ activeTab === 'mobile' }}" class="photo-grid-top">
+        <!-- 左侧大图 -->
+        <image class="grid-img img-large" src="{{hotTopList[0]}}" onclick="goToWallpaperDetail(hotTopList[0], 'mobile')"></image>
+        <!-- 右侧使用 wrap 排列 4 张图 (2x2) -->
+        <div class="right-col-wrap">
+          <image class="grid-img img-med" src="{{hotTopList[1]}}" onclick="goToWallpaperDetail(hotTopList[1], 'mobile')"></image>
+          <image class="grid-img img-med" src="{{hotTopList[2]}}" onclick="goToWallpaperDetail(hotTopList[2], 'mobile')"></image>
+          <image class="grid-img img-med" src="{{hotTopList[3]}}" onclick="goToWallpaperDetail(hotTopList[3], 'mobile')"></image>
+          <image class="grid-img img-med" src="{{hotTopList[4]}}" onclick="goToWallpaperDetail(hotTopList[4], 'mobile')"></image>
+        </div>
+      </div>
+      <!-- 下方每行4个 -->
+      <div if="{{ activeTab === 'mobile' }}" class="photo-grid-bottom">
+        <image class="grid-img img-small" src="{{hotBottomList[0]}}" onclick="goToWallpaperDetail(hotBottomList[0], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[1]}}" onclick="goToWallpaperDetail(hotBottomList[1], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[2]}}" onclick="goToWallpaperDetail(hotBottomList[2], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[3]}}" onclick="goToWallpaperDetail(hotBottomList[3], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[4]}}" onclick="goToWallpaperDetail(hotBottomList[4], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[5]}}" onclick="goToWallpaperDetail(hotBottomList[5], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[6]}}" onclick="goToWallpaperDetail(hotBottomList[6], 'mobile')"></image>
+        <image class="grid-img img-small" src="{{hotBottomList[7]}}" onclick="goToWallpaperDetail(hotBottomList[7], 'mobile')"></image>
+      </div>
+
+      <!-- 电脑壁纸视图：1大 + 1行2个 -->
+      <div if="{{ activeTab === 'pc' }}" class="pc-grid-top">
+        <image class="grid-img pc-img-large" src="{{pcTopImage}}" onclick="goToWallpaperDetail(pcTopImage, 'pc')"></image>
+      </div>
+      <div if="{{ activeTab === 'pc' }}" class="pc-grid-bottom">
+        <image class="grid-img pc-img-half" src="{{pcBottomList[0]}}" onclick="goToWallpaperDetail(pcBottomList[0], 'pc')"></image>
+        <image class="grid-img pc-img-half" src="{{pcBottomList[1]}}" onclick="goToWallpaperDetail(pcBottomList[1], 'pc')"></image>
+        <image class="grid-img pc-img-half" src="{{pcBottomList[2]}}" onclick="goToWallpaperDetail(pcBottomList[2], 'pc')"></image>
+        <image class="grid-img pc-img-half" src="{{pcBottomList[3]}}" onclick="goToWallpaperDetail(pcBottomList[3], 'pc')"></image>
+        <image class="grid-img pc-img-half" src="{{pcBottomList[4]}}" onclick="goToWallpaperDetail(pcBottomList[4], 'pc')"></image>
+        <image class="grid-img pc-img-half" src="{{pcBottomList[5]}}" onclick="goToWallpaperDetail(pcBottomList[5], 'pc')"></image>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+  </div>
+</template>
+
+<script>
+import prompt from '@system.prompt'
+import router from '@system.router'
+
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const CATEGORY_CODE_MAP = {
+  '动漫': 'dm',
+  '人物': 'rw',
+  '萌宠': 'mc',
+  '自然': 'zr'
+}
+
+export default {
+  data: {
+    activeTab: 'mobile',
+    pageSeed: 1,
+    categoryCovers: [],
+    hotTopList: [],
+    hotBottomList: [],
+    pcTopImage: '',
+    pcBottomList: []
+  },
+  onInit() {
+    this.applyRemoteImages()
+  },
+  switchTab(tab) {
+    this.activeTab = tab
+    this.applyRemoteImages()
+  },
+  refreshWallpapers() {
+    this.shuffleCurrentWallpapers()
+  },
+  shuffleCurrentWallpapers() {
+    if (this.activeTab === 'pc') {
+      const pcList = [this.pcTopImage, ...this.pcBottomList].filter(Boolean)
+      if (!pcList.length) {
+        this.applyRemoteImages()
+        return
+      }
+
+      const shuffled = this.shuffleList(pcList)
+      this.pcTopImage = shuffled[0] || ''
+      this.pcBottomList = shuffled.slice(1)
+      return
+    }
+
+    const mobileList = [...this.hotTopList, ...this.hotBottomList].filter(Boolean)
+    if (!mobileList.length) {
+      this.applyRemoteImages()
+      return
+    }
+
+    const shuffled = this.shuffleList(mobileList)
+    this.hotTopList = shuffled.slice(0, 5)
+    this.hotBottomList = shuffled.slice(5)
+  },
+  shuffleList(list) {
+    const shuffled = [...list]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = shuffled[i]
+      shuffled[i] = shuffled[j]
+      shuffled[j] = temp
+    }
+    return shuffled
+  },
+  applyRemoteImages() {
+    const isPc = this.activeTab === 'pc'
+    const baseUrl = isPc ? BASE_URL_COMPUTER : BASE_URL_PHONE
+    this.categoryCovers = this.getCategoryCoverList(baseUrl)
+
+    if (isPc) {
+      const pcList = this.buildSeries(baseUrl, 'rm', 1 + (this.pageSeed - 1) * 7, 7)
+      this.pcTopImage = pcList[0]
+      this.pcBottomList = pcList.slice(1)
+      this.hotTopList = []
+      this.hotBottomList = []
+      return
+    }
+
+    const mobileList = this.buildSeries(baseUrl, 'rm', 1 + (this.pageSeed - 1) * 13, 13)
+    this.hotTopList = mobileList.slice(0, 5)
+    this.hotBottomList = mobileList.slice(5)
+    this.pcTopImage = ''
+    this.pcBottomList = []
+  },
+  getCategoryCoverList(baseUrl) {
+    return [
+      `${baseUrl}/dm/1.jpg`,
+      `${baseUrl}/rw/1.jpg`,
+      `${baseUrl}/mc/1.jpg`,
+      `${baseUrl}/zr/1.jpg`
+    ]
+  },
+  buildSeries(baseUrl, categoryCode, start, count) {
+    const list = []
+    for (let i = 0; i < count; i++) {
+      list.push(`${baseUrl}/${categoryCode}/${start + i}.jpg`)
+    }
+    return list
+  },
+  goToWallpaperDetail(url, type) {
+    if (!url) {
+      return
+    }
+
+    let initialId = 1
+    const match = url.match(/\/(\d+)\.jpg$/)
+    if (match) {
+      initialId = parseInt(match[1], 10)
+    }
+
+    router.push({
+      uri: 'pages/WallpaperDetail',
+      params: {
+        wallpaperType: type || this.activeTab,
+        category: 'rm',
+        initialId: initialId,
+        favoriteUrl: url
+      }
+    })
+  },
+  goToCategory(name) {
+    router.push({
+      uri: 'pages/CategoryDetail',
+      params: {
+        categoryName: name,
+        categoryCode: CATEGORY_CODE_MAP[name] || 'rm',
+        wallpaperType: this.activeTab
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page {
+  flex-direction: column;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.header-area {
+  width: 250px;
+  position: relative;
+  flex-direction: column;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* 磨砂容器 */
+.top-cards-container {
+  width: 226px;
+  margin: -14px 12px 0 12px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.blur-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 226px;
+  height: 100%;
+  border-radius: 12px;
+  filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.frost-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 226px;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+}
+
+.top-cards-content {
+  flex-direction: column;
+  width: 226px;
+  padding: 12px 0;
+}
+
+/* 手机/电脑壁纸切换 */
+.tab-switcher {
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.switch-btn {
+  width: 110px;
+  height: 34px;
+  border-radius: 17px;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffebe1;
+}
+
+.active-btn {
+  background: linear-gradient(135deg, #ff7b2b 0%, #ff5213 100%);
+}
+
+.switch-text {
+  font-size: 13px;
+  color: #ff5e18;
+}
+
+.active-text {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* 4个分类 */
+.category-grid {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.cat-item {
+  width: 110px;
+  height: 68px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  background-color: #dfdfdf;
+  position: relative;
+  overflow: hidden;
+}
+
+.cat-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.cat-title {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* 热门壁纸 */
+.hot-section {
+  flex-direction: column;
+  padding: 16px 12px;
+}
+
+.hot-header {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.hot-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #222222;
+}
+
+.refresh-wrap {
+  flex-direction: row;
+  align-items: center;
+}
+
+.refresh-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  margin-right: 4px;
+}
+
+.refresh-text {
+  font-size: 11px;
+  color: #999999;
+}
+
+/* 特殊图片网格布局 */
+.photo-grid-top {
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.img-large {
+  width: 110px;
+  height: 166px;
+  border-radius: 6px;
+}
+
+.right-col-wrap {
+  width: 110px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+}
+
+.img-med {
+  width: 52px;
+  height: 80px;
+  border-radius: 6px;
+}
+
+.photo-grid-bottom {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.img-small {
+  width: 52px;
+  height: 80px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.grid-img {
+  background-color: #efefef;
+  object-fit: cover;
+}
+
+/* 电脑壁纸视图样式 */
+.pc-grid-top {
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.pc-img-large {
+  width: 226px;
+  height: 127px; /* 约 16:9 */
+  border-radius: 6px;
+}
+
+.pc-grid-bottom {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.pc-img-half {
+  width: 110px;
+  height: 62px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.bottom-spacer {
+  width: 100%;
+  height: 70px;
+}
+</style>

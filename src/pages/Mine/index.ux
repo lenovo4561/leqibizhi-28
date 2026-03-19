@@ -1,0 +1,159 @@
+<template>
+  <stack class="container">
+    <image class="bg-image" src="../../assets/img/wodebg.png"></image>
+
+    <div class="content">
+      <div class="user-info">
+        <image class="avatar" src="../../assets/img/tx.png"></image>
+        <text class="username">赵吾光</text>
+      </div>
+
+      <div class="services-card">
+        <text class="card-title">其他服务</text>
+
+        <div class="service-item" onclick="openAgreement">
+          <div class="item-left">
+            <image class="item-icon" src="../../assets/img/yonghuxieyi.png"></image>
+            <text class="item-text">用户协议</text>
+          </div>
+          <image class="arrow" src="../../assets/img/jiantou.png"></image>
+        </div>
+
+        <div class="service-item" onclick="openPrivacy">
+          <div class="item-left">
+            <image class="item-icon" src="../../assets/img/yinsizhengce-1.png"></image>
+            <text class="item-text">隐私政策</text>
+          </div>
+          <image class="arrow" src="../../assets/img/jiantou.png"></image>
+        </div>
+      </div>
+    </div>
+  </stack>
+</template>
+
+<script>
+import router from '@system.router'
+
+export default {
+  openAgreement() {
+    router.push({
+      uri: '/pages/Webview',
+      params: {
+        url: 'https://api.51dsp.cn/index/agreement.do?pn=com.clleqibz.screenjm',
+        title: '用户协议'
+      }
+    })
+  },
+  openPrivacy() {
+    router.push({
+      uri: '/pages/Webview',
+      params: {
+        url: 'https://api.51dsp.cn/index/privacy.do?pn=com.clleqibz.screenjm',
+        title: '隐私政策'
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.container {
+  width: 100%;
+  height: 100%;
+}
+
+.bg-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.content {
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  margin-top:75px
+}
+
+.header {
+  height: 23px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.header-title {
+  font-size: 11px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.user-info {
+  flex-direction: row;
+  align-items: center;
+  padding: 9px;
+  margin-top: 5px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 14px;
+  margin-right: 7px;
+}
+
+.username {
+  font-size: 12px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.services-card {
+  flex-direction: column;
+  background-color: #ffffff;
+  width: 236px;
+  margin: 0 7px;
+  border-radius: 6px;
+  padding: 7px;
+  margin-top: 5px;
+  flex: 0;
+}
+
+.card-title {
+  font-size: 10px;
+  color: #000000;
+  font-weight: bold;
+  margin-bottom: 9px;
+}
+
+.service-item {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.item-left {
+  flex-direction: row;
+  align-items: center;
+}
+
+.item-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  object-fit: contain;
+}
+
+.item-text {
+  font-size: 10px;
+  color: #333333;
+}
+
+.arrow {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 1;
+}
+</style>

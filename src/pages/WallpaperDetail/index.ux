@@ -1,0 +1,488 @@
+<template>
+  <div class="page-container">
+    <!-- 背景层 -->
+    <div if="{{ wallpaperType === 'pc' }}" class="pc-bg-wrap">
+      <image class="blur-bg-img" src="{{currentUrl}}"></image>
+      <div class="blur-overlay"></div>
+    </div>
+    
+    <div if="{{ wallpaperType !== 'pc' }}" class="mobile-bg-wrap">
+      <image class="wallpaper-img" src="{{currentUrl}}"></image>
+    </div>
+
+    <!-- PC版的处于中间的清晰图片 -->
+    <div if="{{ wallpaperType === 'pc' }}" class="pc-center-wrap">
+      <image class="pc-clear-img" src="{{currentUrl}}"></image>
+    </div>
+
+    <!-- UI交互层 -->
+    <div class="ui-layer">
+      <!-- 顶部返回悬浮按钮 -->
+      <div class="top-bar">
+        <div class="top-back" onclick="goBack">
+          <image class="back-icon" src="../../assets/img/back-1.png"></image>
+        </div>
+      </div>
+
+      <!-- 底部两个大按钮 -->
+      <div class="bottom-tools">
+        <div class="tool-btn collect-btn" onclick="toggleCollect">
+          <image class="tool-icon" src="{{isCollected ? '../../assets/img/like-s.png' : '../../assets/img/like-u.png'}}"></image>
+          <text class="tool-text">收藏</text>
+        </div>
+        
+        <div class="tool-btn download-btn" onclick="downloadWall">
+          <image class="tool-icon" src="../../assets/img/xiazai.png"></image>
+          <text class="tool-text">下载</text>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import router from '@system.router'
+import prompt from '@system.prompt'
+import storage from '@system.storage'
+import request from '@system.request'
+import media from '@system.media'
+
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const VALID_CATEGORIES = ['rm', 'dm', 'mc', 'rw', 'zr']
+const MAX_WALLPAPER_INDEX = 20
+const CATEGORY_CONFIG = {
+  rm: { path: 'rm', count: 20 },
+  dm: { path: 'dm', count: 20 },
+  mc: { path: 'mc', count: 20 },
+  rw: { path: 'rw', count: 20 },
+  zr: { path: 'zr', count: 20 }
+}
+
+export default {
+  public: {
+    wallpaperType: 'mobile',
+    category: 'rm',
+    initialId: 1,
+    favoriteUrl: ''
+  },
+  
+  private: {
+    isCollected: false,
+    currentUrl: '',
+    wallpapers: [],
+    currentIndex: 0,
+    totalCount: 0
+  },
+
+  onInit() {
+    this.normalizeIncomingParams()
+    this.generateWallpapers()
+    this.resolveCurrentWallpaper()
+    if (!this.currentUrl) {
+      this.currentUrl = `${BASE_URL_PHONE}/rm/1.jpg`
+      this.wallpaperType = 'mobile'
+      this.category = 'rm'
+      this.currentIndex = 0
+    }
+    this.checkIfFavorite()
+  },
+
+  onShow() {
+    if (!this.currentUrl) {
+      this.resolveCurrentWallpaper()
+    }
+    this.checkIfFavorite()
+  },
+
+  normalizeIncomingParams() {
+    const rawType = String(this.wallpaperType || '').toLowerCase()
+    if (rawType === 'computer') {
+      this.wallpaperType = 'pc'
+    } else if (rawType === 'phone') {
+      this.wallpaperType = 'mobile'
+    } else if (rawType !== 'pc' && rawType !== 'mobile') {
+      this.wallpaperType = 'mobile'
+    }
+
+    this.category = this.normalizeCategory(this.category)
+    this.initialId = this.normalizeId(this.initialId)
+  },
+
+  normalizeFavoriteUrl(url) {
+    if (!url) {
+      return ''
+    }
+    const raw = String(url).trim()
+    if (!raw) {
+      return ''
+    }
+    if (raw === 'undefined' || raw === 'null' || raw === '[object Object]') {
+      return ''
+    }
+    return /^https?:\/\//.test(raw) ? raw : ''
+  },
+
+  normalizeCategory(category) {
+    const raw = String(category || '').toLowerCase()
+    return VALID_CATEGORIES.indexOf(raw) > -1 ? raw : 'rm'
+  },
+
+  normalizeId(id) {
+    const value = parseInt(id, 10)
+    if (!value || value < 1) {
+      return 1
+    }
+    if (value > MAX_WALLPAPER_INDEX) {
+      return MAX_WALLPAPER_INDEX
+    }
+    return value
+  },
+
+  generateWallpapers() {
+    const safeCategory = this.normalizeCategory(this.category)
+    const config = CATEGORY_CONFIG[safeCategory]
+    if (!config) {
+      this.wallpapers = []
+      this.totalCount = 0
+      return
+    }
+
+    const baseUrl = this.wallpaperType === 'pc' ? BASE_URL_COMPUTER : BASE_URL_PHONE
+    const list = []
+    for (let i = 1; i <= config.count; i++) {
+      list.push({
+        id: i,
+        url: `${baseUrl}/${config.path}/${i}.jpg`
+      })
+    }
+    this.wallpapers = list
+    this.totalCount = list.length
+  },
+
+  resolveCurrentWallpaper() {
+    if (!this.wallpapers || !this.wallpapers.length) {
+      this.currentUrl = ''
+      return
+    }
+
+    let index = -1
+    const safeFavoriteUrl = this.normalizeFavoriteUrl(this.favoriteUrl)
+    if (safeFavoriteUrl) {
+      index = this.wallpapers.findIndex(item => item.url === safeFavoriteUrl)
+    }
+    if (index === -1) {
+      const safeId = this.normalizeId(this.initialId)
+      index = this.wallpapers.findIndex(item => item.id === safeId)
+    }
+    if (index < 0) {
+      index = 0
+    }
+
+    this.currentIndex = index
+    this.currentUrl = this.wallpapers[index].url
+  },
+
+  goBack() {
+    router.back()
+  },
+
+  checkIfFavorite() {
+    const currentUrl = this.currentUrl
+    if (!currentUrl) {
+      this.isCollected = false
+      return
+    }
+
+    storage.get({
+      key: 'wallpaper_favorites',
+      success: value => {
+        const favorites = this.parseFavorites(value)
+        this.isCollected = favorites.some(item => item.url === currentUrl)
+      },
+      fail: () => {
+        this.isCollected = false
+      }
+    })
+  },
+
+  toggleCollect() {
+    const currentUrl = this.currentUrl
+    if (!currentUrl) {
+      return
+    }
+
+    storage.get({
+      key: 'wallpaper_favorites',
+      success: value => {
+        let favorites = this.parseFavorites(value)
+        const index = favorites.findIndex(item => item.url === currentUrl)
+
+        if (index > -1) {
+          favorites.splice(index, 1)
+          storage.set({
+            key: 'wallpaper_favorites',
+            value: JSON.stringify(favorites),
+            success: () => {
+              this.isCollected = false
+              prompt.showToast({
+                message: '已取消收藏'
+              })
+            },
+            fail: () => {
+              prompt.showToast({
+                message: '取消收藏失败'
+              })
+            }
+          })
+          return
+        }
+
+        favorites.push({
+          url: currentUrl,
+          category: this.category,
+          type: this.wallpaperType,
+          timestamp: Date.now()
+        })
+        storage.set({
+          key: 'wallpaper_favorites',
+          value: JSON.stringify(favorites),
+          success: () => {
+            this.isCollected = true
+            prompt.showToast({
+              message: '已添加到收藏'
+            })
+          },
+          fail: () => {
+            prompt.showToast({
+              message: '收藏失败'
+            })
+          }
+        })
+      },
+      fail: () => {
+        const favorites = [
+          {
+            url: currentUrl,
+            category: this.category,
+            type: this.wallpaperType,
+            timestamp: Date.now()
+          }
+        ]
+        storage.set({
+          key: 'wallpaper_favorites',
+          value: JSON.stringify(favorites),
+          success: () => {
+            this.isCollected = true
+            prompt.showToast({
+              message: '已添加到收藏'
+            })
+          },
+          fail: () => {
+            prompt.showToast({
+              message: '收藏失败'
+            })
+          }
+        })
+      }
+    })
+  },
+
+  parseFavorites(value) {
+    try {
+      const raw = value && typeof value === 'object' && value.data !== undefined ? value.data : value
+      const parsed = JSON.parse(raw || '[]')
+      return Array.isArray(parsed) ? parsed : []
+    } catch (err) {
+      return []
+    }
+  },
+
+  downloadWall() {
+    const currentUrl = this.currentUrl
+    if (!currentUrl) {
+      return
+    }
+
+    prompt.showToast({
+      message: '开始下载...'
+    })
+
+    const encodedUrl = currentUrl.replace(/\s/g, '%20')
+    request.download({
+      url: encodedUrl,
+      success: data => {
+        request.onDownloadComplete({
+          token: data.token,
+          success: ret => {
+            media.saveToPhotosAlbum({
+              uri: ret.uri,
+              success: () => {
+                prompt.showToast({
+                  message: '下载成功'
+                })
+              },
+              fail: () => {
+                prompt.showToast({
+                  message: '保存失败，请检查权限'
+                })
+              }
+            })
+          },
+          fail: () => {
+            prompt.showToast({
+              message: '下载失败'
+            })
+          }
+        })
+      },
+      fail: (data, code) => {
+        prompt.showToast({
+          message: '下载请求失败: ' + code
+        })
+      }
+    })
+  }
+}
+</script>
+
+<style>
+.page-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+}
+
+/* --- 手机壁纸全屏铺满 --- */
+.mobile-bg-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.wallpaper-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- PC壁纸居中 + 背景磨砂 --- */
+.pc-bg-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.blur-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(25px); /* 高斯模糊效果 */
+}
+.blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* 上加一层透明黑底以凸显中间图 */
+}
+
+.pc-center-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.pc-clear-img {
+  width: 100%;
+  height: 140px; /* 限制电脑壁纸的高度，以便给上下留出更多磨砂区域 */
+  object-fit: cover; 
+}
+
+
+/* --- UI控制层 --- */
+.ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.top-bar {
+  width: 100%;
+  height: 80px;
+  padding-top: 30px; /* 状态栏高度偏下点 */
+  padding-left: 12px;
+}
+
+/* 顶部圆形返回按钮 */
+.top-back {
+  width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.back-icon {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+}
+
+/* 底部操作区组 */
+.bottom-tools {
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.tool-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 16px; 
+}
+
+/* 收藏按钮: 橘红色背景 */
+.collect-btn {
+  background-color: #f76822;
+}
+
+/* 下载按钮: 浅蓝背景色 */
+.download-btn {
+  background-color: #4dcde7;
+}
+
+.tool-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  margin-bottom: 2px;
+}
+
+.tool-text {
+  font-size: 10px;
+  color: #ffffff;
+  margin-top: 1px;
+}
+</style>
