@@ -48,53 +48,59 @@
     "designWidth": 250
   },
   "router": {
-    "entry": "pages/Splash",
+    "entry": "pkg_main/pages/Splash",
     "pages": {
-      "pages/Splash": {
+      "pkg_main/pages/Splash": {
         "component": "index"
       },
-      "pages/Demo": {
+      "pkg_main/pages/Demo": {
         "component": "index"
       },
-      "pages/DemoDetail": {
+      "pkg_main/pages/DemoDetail": {
         "component": "index"
       },
-      "pages/CategoryDetail": {
+      "pkg_main/pages/CategoryDetail": {
         "component": "index"
       },
-      "pages/WallpaperDetail": {
+      "pkg_main/pages/WallpaperDetail": {
         "component": "index"
       },
-      "pages/Webview": {
+      "pkg_main/pages/Webview": {
         "component": "index"
       }
     }
   },
+  "subpackages": [
+    {
+      "name": "pkg_main",
+      "resource": "pkg_main"
+    }
+  ],
   "display": {
     "titleBarBackgroundColor": "#f2f2f2",
     "titleBarTextColor": "#414141",
     "menu": true,
     "pages": {
-      "pages/Splash": {
+      "pkg_main/pages/Splash": {
         "titleBar": false,
         "menu": false
       },
-      "pages/Demo": {
+      "pkg_main/pages/Demo": {
         "titleBar": false,
         "menu": false
       },
-      "pages/CategoryDetail": {
+      "pkg_main/pages/CategoryDetail": {
         "titleBar": false,
         "menu": false
       },
-      "pages/WallpaperDetail": {
+      "pkg_main/pages/WallpaperDetail": {
         "titleBar": false,
         "menu": false
       },
-      "pages/DemoDetail": {
+      "pkg_main/pages/DemoDetail": {
         "titleBarText": "详情页"
       },
-      "pages/Webview": {
+      "pkg_main/pages/Webview": {
         "titleBarText": ""
       }
     }

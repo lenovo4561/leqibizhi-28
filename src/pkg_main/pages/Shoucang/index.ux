@@ -147,7 +147,7 @@ export default {
     }
 
     router.push({
-      uri: 'pages/WallpaperDetail',
+      uri: '/pkg_main/pages/WallpaperDetail',
       params: {
         category: item.category,
         initialId: initialId,

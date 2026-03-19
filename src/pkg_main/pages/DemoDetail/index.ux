@@ -23,13 +23,17 @@
 </template>
 
 <script>
+import prompt from '@system.prompt'
+
 export default {
   private: {
     text: '快应用是什么？'
   },
 
   onWelcomeBtnClick() {
-    $utils.showToast('快应用：复杂生活的简单答案，让生活更顺畅')
+    prompt.showToast({
+      message: '快应用：复杂生活的简单答案，让生活更顺畅'
+    })
   }
 }
 </script>

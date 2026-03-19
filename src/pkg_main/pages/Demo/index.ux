@@ -75,13 +75,13 @@ export default {
       success: (value) => {
         if (value !== 'true') {
           router.replace({
-            uri: '/pages/Splash'
+            uri: '/pkg_main/pages/Splash'
           })
         }
       },
       fail: () => {
         router.replace({
-          uri: '/pages/Splash'
+          uri: '/pkg_main/pages/Splash'
         })
       }
     })

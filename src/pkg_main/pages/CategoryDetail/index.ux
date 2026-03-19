@@ -92,7 +92,7 @@ export default {
 
   goToDetail(initialId) {
     router.push({
-      uri: 'pages/WallpaperDetail',
+      uri: '/pkg_main/pages/WallpaperDetail',
       params: {
         wallpaperType: this.wallpaperType,
         category: this.categoryCode,

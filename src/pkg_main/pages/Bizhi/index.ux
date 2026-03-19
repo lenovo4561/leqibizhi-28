@@ -216,7 +216,7 @@ export default {
     }
 
     router.push({
-      uri: 'pages/WallpaperDetail',
+      uri: '/pkg_main/pages/WallpaperDetail',
       params: {
         wallpaperType: type || this.activeTab,
         category: 'rm',
@@ -227,7 +227,7 @@ export default {
   },
   goToCategory(name) {
     router.push({
-      uri: 'pages/CategoryDetail',
+      uri: '/pkg_main/pages/CategoryDetail',
       params: {
         categoryName: name,
         categoryCode: CATEGORY_CODE_MAP[name] || 'rm',
