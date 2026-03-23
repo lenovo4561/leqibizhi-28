@@ -13,6 +13,7 @@
               <image class="back-icon" src="../../assets/img/back.png"></image>
             </div>
             <text class="title-text">{{ categoryName }}</text>
+            <div class="nav-right-placeholder"></div>
           </div>
         </div>
 
@@ -131,8 +132,11 @@ export default {
   width: 250px;
   height: 60px;
   padding-top: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   position: relative;
 }
 
@@ -142,10 +146,10 @@ export default {
   height: 24px;
   border-radius: 12px;
   background-color: #ffffff;
-  margin-left: 12px;
   justify-content: center;
   align-items: center;
-  z-index: 2;
+  position: relative;
+  z-index: 3;
 }
 
 .back-icon {
@@ -155,13 +159,17 @@ export default {
 }
 
 .title-text {
-  position: absolute;
-  width: 250px;
+  flex: 1;
   text-align: center;
   font-size: 16px;
   font-weight: bold;
   color: #000000;
   z-index: 1;
+}
+
+.nav-right-placeholder {
+  width: 24px;
+  height: 24px;
 }
 
 /* 内容列表区域 */

@@ -45,18 +45,15 @@
 
     <!-- 列表区域 -->
     <div class="list-section" if="{{ activeTab === 'pc' }}">
-      <image class="grid-img img-full" src="{{pcRankList[0]}}" onclick="goToWallpaperDetail(pcRankList[0], 'pc')"></image>
-      <image class="grid-img img-full" src="{{pcRankList[1]}}" onclick="goToWallpaperDetail(pcRankList[1], 'pc')"></image>
-      <image class="grid-img img-full" src="{{pcRankList[2]}}" onclick="goToWallpaperDetail(pcRankList[2], 'pc')"></image>
+      <block for="{{pcRankList}}">
+        <image class="grid-img img-full" src="{{$item}}" onclick="goToWallpaperDetail($item, 'pc')"></image>
+      </block>
     </div>
 
     <div class="list-section-mobile" if="{{ activeTab === 'mobile' }}">
-      <image class="grid-img img-half" src="{{mobileRankList[0]}}" onclick="goToWallpaperDetail(mobileRankList[0], 'mobile')"></image>
-      <image class="grid-img img-half" src="{{mobileRankList[1]}}" onclick="goToWallpaperDetail(mobileRankList[1], 'mobile')"></image>
-      <image class="grid-img img-half" src="{{mobileRankList[2]}}" onclick="goToWallpaperDetail(mobileRankList[2], 'mobile')"></image>
-      <image class="grid-img img-half" src="{{mobileRankList[3]}}" onclick="goToWallpaperDetail(mobileRankList[3], 'mobile')"></image>
-      <image class="grid-img img-half" src="{{mobileRankList[4]}}" onclick="goToWallpaperDetail(mobileRankList[4], 'mobile')"></image>
-      <image class="grid-img img-half" src="{{mobileRankList[5]}}" onclick="goToWallpaperDetail(mobileRankList[5], 'mobile')"></image>
+      <block for="{{mobileRankList}}">
+        <image class="grid-img img-half" src="{{$item}}" onclick="goToWallpaperDetail($item, 'mobile')"></image>
+      </block>
     </div>
 
     <div class="bottom-spacer"></div>
@@ -68,12 +65,16 @@ import router from '@system.router'
 
 const RANK_URLS = {
   mobile: {
-    hot: 'https://cdn.shijinzhuang.com/quick/leqbz/php/sjbz/rm',
-    new: 'https://cdn.shijinzhuang.com/quick/leqbz/php/sjbz/zx'
+    hotStart: 'https://cdn.shijinzhuang.com/quick/leqbz/phb/sjbz/rm',
+    hotEnd: 'https://cdn.shijinzhuang.com/quick/leqbz/phb/sjbz/rm',
+    newStart: 'https://cdn.shijinzhuang.com/quick/leqbz/phb/sjbz/zx',
+    newEnd: 'https://cdn.shijinzhuang.com/quick/leqbz/bz/sjbz/zx'
   },
   pc: {
-    hot: 'https://cdn.shijinzhuang.com/quick/leqbz/php/dnbz/rm',
-    new: 'https://cdn.shijinzhuang.com/quick/leqbz/php/dnbz/zx'
+    hotStart: 'https://cdn.shijinzhuang.com/quick/leqbz/phb/dnbz/rm',
+    hotEnd: 'https://cdn.shijinzhuang.com/quick/leqbz/phb/sjbz/rm',
+    newStart: 'https://cdn.shijinzhuang.com/quick/leqbz/phb/dnbz/zx',
+    newEnd: 'https://cdn.shijinzhuang.com/quick/leqbz/bz/sjbz/zx'
   }
 }
 const RANK_TOTAL_COUNT = 20
@@ -97,21 +98,28 @@ export default {
     this.applyRankImages()
   },
   applyRankImages() {
+    const sortKey = this.sortTab === 'new' ? 'new' : 'hot'
+    const mobileCfg = RANK_URLS.mobile
+    const pcCfg = RANK_URLS.pc
     this.mobileRankList = this.buildSeries(
-      RANK_URLS.mobile[this.sortTab],
+      mobileCfg[sortKey + 'Start'],
+      mobileCfg[sortKey + 'End'],
       1,
       RANK_TOTAL_COUNT
     )
     this.pcRankList = this.buildSeries(
-      RANK_URLS.pc[this.sortTab],
+      pcCfg[sortKey + 'Start'],
+      pcCfg[sortKey + 'End'],
       1,
       RANK_TOTAL_COUNT
     )
   },
-  buildSeries(baseUrl, start, count) {
+  buildSeries(startBaseUrl, endBaseUrl, start, count) {
     const list = []
     for (let i = 0; i < count; i++) {
-      list.push(`${baseUrl}/${start + i}.jpg`)
+      const currentId = start + i
+      const baseUrl = i === count - 1 ? endBaseUrl : startBaseUrl
+      list.push(`${baseUrl}/${currentId}.jpg`)
     }
     return list
   },

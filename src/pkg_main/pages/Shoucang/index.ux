@@ -1,62 +1,64 @@
 <template>
-  <div class="page">
-    <div class="header-area">
+  <list class="page">
+    <list-item class="header-area" type="header">
       <image class="header-bg" src="../../assets/img/shouyedingbg.png"></image>
       <div style="height: 180px;"></div>
-    </div>
+    </list-item>
 
-    <stack class="top-cards-container">
-      <div class="blur-layer"></div>
-      <div class="frost-overlay"></div>
+    <list-item class="content-item" type="content">
+      <stack class="top-cards-container">
+        <div class="blur-layer"></div>
+        <div class="frost-overlay"></div>
 
-      <div class="top-cards-content">
-        <div class="tab-switcher">
-          <div
-            class="switch-btn"
-            style="{{ activeTab === 'mobile' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
-            onclick="switchTab('mobile')">
-            <text class="switch-text" style="{{ activeTab === 'mobile' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">手机壁纸</text>
+        <div class="top-cards-content">
+          <div class="tab-switcher">
+            <div
+              class="switch-btn"
+              style="{{ activeTab === 'mobile' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
+              onclick="switchTab('mobile')">
+              <text class="switch-text" style="{{ activeTab === 'mobile' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">手机壁纸</text>
+            </div>
+            <div
+              class="switch-btn second-switch-btn"
+              style="{{ activeTab === 'pc' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
+              onclick="switchTab('pc')">
+              <text class="switch-text" style="{{ activeTab === 'pc' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">电脑壁纸</text>
+            </div>
           </div>
-          <div
-            class="switch-btn second-switch-btn"
-            style="{{ activeTab === 'pc' ? 'background-color:#ff5e18;' : 'background-color:#ffebe1;' }}"
-            onclick="switchTab('pc')">
-            <text class="switch-text" style="{{ activeTab === 'pc' ? 'color:#ffffff;font-weight:700;' : 'color:#ff5e18;font-weight:400;' }}">电脑壁纸</text>
-          </div>
+
+          <block if="{{currentList.length === 0}}">
+            <div class="empty-state">
+              <image class="empty-img" src="../../assets/img/kong.png"></image>
+              <text class="empty-text">还未添加收藏哦~</text>
+            </div>
+          </block>
+
+          <block if="{{currentList.length > 0}}">
+            <div class="list-container" if="{{activeTab === 'mobile'}}">
+              <div class="list-column">
+                <div class="img-wrapper" for="{{leftColumnList}}" onclick="goToDetail($item)">
+                  <image class="grid-img" src="{{$item.url}}"></image>
+                </div>
+              </div>
+              <div class="list-column">
+                <div class="img-wrapper" for="{{rightColumnList}}" onclick="goToDetail($item)">
+                  <image class="grid-img" src="{{$item.url}}"></image>
+                </div>
+              </div>
+            </div>
+
+            <div class="pc-list-container" if="{{activeTab === 'pc'}}">
+              <div class="pc-img-wrapper" for="{{currentList}}" onclick="goToDetail($item)">
+                <image class="pc-grid-img" src="{{$item.url}}"></image>
+              </div>
+            </div>
+          </block>
         </div>
+      </stack>
+    </list-item>
 
-        <block if="{{currentList.length === 0}}">
-          <div class="empty-state">
-            <image class="empty-img" src="../../assets/img/kong.png"></image>
-            <text class="empty-text">还未添加收藏哦~</text>
-          </div>
-        </block>
-
-        <block if="{{currentList.length > 0}}">
-          <div class="list-container" if="{{activeTab === 'mobile'}}">
-            <div class="list-column">
-              <div class="img-wrapper" for="{{leftColumnList}}" onclick="goToDetail($item)">
-                <image class="grid-img" src="{{$item.url}}"></image>
-              </div>
-            </div>
-            <div class="list-column">
-              <div class="img-wrapper" for="{{rightColumnList}}" onclick="goToDetail($item)">
-                <image class="grid-img" src="{{$item.url}}"></image>
-              </div>
-            </div>
-          </div>
-
-          <div class="pc-list-container" if="{{activeTab === 'pc'}}">
-            <div class="pc-img-wrapper" for="{{currentList}}" onclick="goToDetail($item)">
-              <image class="pc-grid-img" src="{{$item.url}}"></image>
-            </div>
-          </div>
-        </block>
-      </div>
-    </stack>
-
-    <div class="bottom-spacer"></div>
-  </div>
+    <list-item class="bottom-spacer" type="spacer"></list-item>
+  </list>
 </template>
 
 <script>
@@ -161,11 +163,13 @@ export default {
 
 <style>
 .page {
-  flex-direction: column;
   width: 100%;
   height: 100%;
   background-color: #ffffff;
-  overflow-y: auto;
+}
+
+.content-item {
+  width: 250px;
 }
 
 .header-area {
@@ -189,7 +193,7 @@ export default {
   margin: -65px 12px 0 12px;
   border-radius: 20px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .blur-layer {
@@ -221,7 +225,7 @@ export default {
 .top-cards-content {
   flex-direction: column;
   width: 226px;
-  padding: 12px 10px;
+  padding: 12px 10px 14px 10px;
   position: relative;
   z-index: 2;
 }
@@ -231,6 +235,7 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
   margin-bottom: 12px;
+  padding-bottom: 2px;
 }
 
 .switch-btn {

@@ -162,19 +162,26 @@ export default {
 
   resolveCurrentWallpaper() {
     if (!this.wallpapers || !this.wallpapers.length) {
-      this.currentUrl = ''
+      const emptyFallbackUrl = this.normalizeFavoriteUrl(this.favoriteUrl)
+      this.currentUrl = emptyFallbackUrl || ''
+      return
+    }
+
+    const safeFavoriteUrl = this.normalizeFavoriteUrl(this.favoriteUrl)
+    if (safeFavoriteUrl) {
+      const matchedIndex = this.wallpapers.findIndex(item => item.url === safeFavoriteUrl)
+      if (matchedIndex > -1) {
+        this.currentIndex = matchedIndex
+      } else {
+        this.currentIndex = Math.max(0, this.normalizeId(this.initialId) - 1)
+      }
+      this.currentUrl = safeFavoriteUrl
       return
     }
 
     let index = -1
-    const safeFavoriteUrl = this.normalizeFavoriteUrl(this.favoriteUrl)
-    if (safeFavoriteUrl) {
-      index = this.wallpapers.findIndex(item => item.url === safeFavoriteUrl)
-    }
-    if (index === -1) {
-      const safeId = this.normalizeId(this.initialId)
-      index = this.wallpapers.findIndex(item => item.id === safeId)
-    }
+    const safeId = this.normalizeId(this.initialId)
+    index = this.wallpapers.findIndex(item => item.id === safeId)
     if (index < 0) {
       index = 0
     }
