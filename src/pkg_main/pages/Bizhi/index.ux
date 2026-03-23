@@ -74,14 +74,11 @@
       </div>
       <!-- 下方每行4个 -->
       <div if="{{ activeTab === 'mobile' }}" class="photo-grid-bottom">
-        <image class="grid-img img-small" src="{{hotBottomList[0]}}" onclick="goToWallpaperDetail(hotBottomList[0], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[1]}}" onclick="goToWallpaperDetail(hotBottomList[1], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[2]}}" onclick="goToWallpaperDetail(hotBottomList[2], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[3]}}" onclick="goToWallpaperDetail(hotBottomList[3], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[4]}}" onclick="goToWallpaperDetail(hotBottomList[4], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[5]}}" onclick="goToWallpaperDetail(hotBottomList[5], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[6]}}" onclick="goToWallpaperDetail(hotBottomList[6], 'mobile')"></image>
-        <image class="grid-img img-small" src="{{hotBottomList[7]}}" onclick="goToWallpaperDetail(hotBottomList[7], 'mobile')"></image>
+        <image
+          class="grid-img img-small"
+          for="{{hotBottomList}}"
+          src="{{$item}}"
+          onclick="goToWallpaperDetail($item, 'mobile')"></image>
       </div>
 
       <!-- 电脑壁纸视图：1大 + 1行2个 -->
@@ -89,12 +86,11 @@
         <image class="grid-img pc-img-large" src="{{pcTopImage}}" onclick="goToWallpaperDetail(pcTopImage, 'pc')"></image>
       </div>
       <div if="{{ activeTab === 'pc' }}" class="pc-grid-bottom">
-        <image class="grid-img pc-img-half" src="{{pcBottomList[0]}}" onclick="goToWallpaperDetail(pcBottomList[0], 'pc')"></image>
-        <image class="grid-img pc-img-half" src="{{pcBottomList[1]}}" onclick="goToWallpaperDetail(pcBottomList[1], 'pc')"></image>
-        <image class="grid-img pc-img-half" src="{{pcBottomList[2]}}" onclick="goToWallpaperDetail(pcBottomList[2], 'pc')"></image>
-        <image class="grid-img pc-img-half" src="{{pcBottomList[3]}}" onclick="goToWallpaperDetail(pcBottomList[3], 'pc')"></image>
-        <image class="grid-img pc-img-half" src="{{pcBottomList[4]}}" onclick="goToWallpaperDetail(pcBottomList[4], 'pc')"></image>
-        <image class="grid-img pc-img-half" src="{{pcBottomList[5]}}" onclick="goToWallpaperDetail(pcBottomList[5], 'pc')"></image>
+        <image
+          class="grid-img pc-img-half"
+          for="{{pcBottomList}}"
+          src="{{$item}}"
+          onclick="goToWallpaperDetail($item, 'pc')"></image>
       </div>
     </div>
 
@@ -106,8 +102,8 @@
 import prompt from '@system.prompt'
 import router from '@system.router'
 
-const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
-const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/quick/leqbz/bz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/quick/leqbz/bz/dnbz'
 const CATEGORY_CODE_MAP = {
   '动漫': 'dm',
   '人物': 'rw',
@@ -175,7 +171,7 @@ export default {
     this.categoryCovers = this.getCategoryCoverList(baseUrl)
 
     if (isPc) {
-      const pcList = this.buildSeries(baseUrl, 'rm', 1 + (this.pageSeed - 1) * 7, 7)
+      const pcList = this.buildSeries(baseUrl, 'rm', 1, 30)
       this.pcTopImage = pcList[0]
       this.pcBottomList = pcList.slice(1)
       this.hotTopList = []
@@ -183,7 +179,7 @@ export default {
       return
     }
 
-    const mobileList = this.buildSeries(baseUrl, 'rm', 1 + (this.pageSeed - 1) * 13, 13)
+    const mobileList = this.buildSeries(baseUrl, 'rm', 1, 30)
     this.hotTopList = mobileList.slice(0, 5)
     this.hotBottomList = mobileList.slice(5)
     this.pcTopImage = ''

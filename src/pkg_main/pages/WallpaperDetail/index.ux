@@ -47,16 +47,16 @@ import storage from '@system.storage'
 import request from '@system.request'
 import media from '@system.media'
 
-const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
-const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/quick/leqbz/bz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/quick/leqbz/bz/dnbz'
 const VALID_CATEGORIES = ['rm', 'dm', 'mc', 'rw', 'zr']
-const MAX_WALLPAPER_INDEX = 20
+const MAX_WALLPAPER_INDEX = 30
 const CATEGORY_CONFIG = {
-  rm: { path: 'rm', count: 20 },
-  dm: { path: 'dm', count: 20 },
-  mc: { path: 'mc', count: 20 },
-  rw: { path: 'rw', count: 20 },
-  zr: { path: 'zr', count: 20 }
+  rm: { path: 'rm', count: 30 },
+  dm: { path: 'dm', count: 30 },
+  mc: { path: 'mc', count: 30 },
+  rw: { path: 'rw', count: 30 },
+  zr: { path: 'zr', count: 30 }
 }
 
 export default {

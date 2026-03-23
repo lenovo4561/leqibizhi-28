@@ -18,24 +18,18 @@
 
         <div class="banner-item">
           <div class="banner-wrap">
-            <image class="banner-img" src="{{bannerUrl}}"></image>
-            <div class="banner-overlay">
-              <text class="banner-text">一块好壁纸，点亮大小屏</text>
-            </div>
+            <image class="banner-img" src="../../assets/img/banner.png"></image>
           </div>
         </div>
       </list-item>
 
       <list-item type="grid-row" class="grid-wrap">
         <div class="photo-grid">
-          <image class="grid-img photo-item" src="{{wallpaperList[0]}}" onclick="goToDetail(1)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[1]}}" onclick="goToDetail(2)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[2]}}" onclick="goToDetail(3)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[3]}}" onclick="goToDetail(4)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[4]}}" onclick="goToDetail(5)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[5]}}" onclick="goToDetail(6)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[6]}}" onclick="goToDetail(7)"></image>
-          <image class="grid-img photo-item" src="{{wallpaperList[7]}}" onclick="goToDetail(8)"></image>
+          <image
+            class="grid-img photo-item"
+            for="{{wallpaperList}}"
+            src="{{$item}}"
+            onclick="goToDetail($idx + 1)"></image>
         </div>
       </list-item>
     </list>
@@ -45,8 +39,9 @@
 <script>
 import router from '@system.router'
 
-const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
-const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/quick/leqbz/bz/sjbz'
+const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/quick/leqbz/bz/dnbz'
+const CATEGORY_TOTAL_COUNT = 30
 const CATEGORY_CODE_MAP = {
   '动漫': 'dm',
   '人物': 'rw',
@@ -80,7 +75,7 @@ export default {
     this.bannerUrl = `${baseUrl}/${this.categoryCode}/1.jpg`
 
     const list = []
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= CATEGORY_TOTAL_COUNT; i++) {
       list.push(`${baseUrl}/${this.categoryCode}/${i}.jpg`)
     }
     this.wallpaperList = list

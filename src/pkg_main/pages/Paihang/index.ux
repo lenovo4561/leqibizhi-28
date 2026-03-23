@@ -66,8 +66,17 @@
 <script>
 import router from '@system.router'
 
-const BASE_URL_PHONE = 'https://cdn.shijinzhuang.com/ahbz/sjbz'
-const BASE_URL_COMPUTER = 'https://cdn.shijinzhuang.com/ahbz/dnbz'
+const RANK_URLS = {
+  mobile: {
+    hot: 'https://cdn.shijinzhuang.com/quick/leqbz/php/sjbz/rm',
+    new: 'https://cdn.shijinzhuang.com/quick/leqbz/php/sjbz/zx'
+  },
+  pc: {
+    hot: 'https://cdn.shijinzhuang.com/quick/leqbz/php/dnbz/rm',
+    new: 'https://cdn.shijinzhuang.com/quick/leqbz/php/dnbz/zx'
+  }
+}
+const RANK_TOTAL_COUNT = 20
 
 export default {
   data: {
@@ -88,15 +97,21 @@ export default {
     this.applyRankImages()
   },
   applyRankImages() {
-    // 先统一复用首页同源分类地址，后续再替换为真实排行接口。
-    const startIndex = this.sortTab === 'hot' ? 1 : 7
-    this.mobileRankList = this.buildSeries(BASE_URL_PHONE, 'rm', startIndex, 6)
-    this.pcRankList = this.buildSeries(BASE_URL_COMPUTER, 'rm', startIndex, 3)
+    this.mobileRankList = this.buildSeries(
+      RANK_URLS.mobile[this.sortTab],
+      1,
+      RANK_TOTAL_COUNT
+    )
+    this.pcRankList = this.buildSeries(
+      RANK_URLS.pc[this.sortTab],
+      1,
+      RANK_TOTAL_COUNT
+    )
   },
-  buildSeries(baseUrl, categoryCode, start, count) {
+  buildSeries(baseUrl, start, count) {
     const list = []
     for (let i = 0; i < count; i++) {
-      list.push(`${baseUrl}/${categoryCode}/${start + i}.jpg`)
+      list.push(`${baseUrl}/${start + i}.jpg`)
     }
     return list
   },
