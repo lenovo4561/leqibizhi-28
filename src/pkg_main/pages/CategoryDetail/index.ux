@@ -25,9 +25,16 @@
       </list-item>
 
       <list-item type="grid-row" class="grid-wrap">
-        <div class="photo-grid">
+        <div if="{{ wallpaperType !== 'pc' }}" class="photo-grid">
           <image
             class="grid-img photo-item"
+            for="{{wallpaperList}}"
+            src="{{$item}}"
+            onclick="goToDetail($idx + 1)"></image>
+        </div>
+        <div if="{{ wallpaperType === 'pc' }}" class="pc-photo-grid">
+          <image
+            class="grid-img pc-photo-item"
             for="{{wallpaperList}}"
             src="{{$item}}"
             onclick="goToDetail($idx + 1)"></image>
@@ -235,6 +242,22 @@ export default {
 .photo-item {
   width: 110px;
   height: 166px; /* 按照原图，可能有些不确定，统一先给这个高度 */
+  border-radius: 6px;
+  margin-bottom: 6px;
+  background-color: #efefef;
+}
+
+/* 电脑壁纸：每行2个，不展示顶部大图 */
+.pc-photo-grid {
+  width: 226px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.pc-photo-item {
+  width: 110px;
+  height: 62px;
   border-radius: 6px;
   margin-bottom: 6px;
   background-color: #efefef;
